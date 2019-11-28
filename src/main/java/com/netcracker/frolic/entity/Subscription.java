@@ -22,15 +22,20 @@ import java.util.Objects;
 public class Subscription {
     enum SubStatus { ACTIVE, EXPIRED, CANCELLED }
 
-    @Id @GeneratedValue
+    @Id
     @Column(name="sub_id")
     private long subId;
 
-    @Column(name="user_id", nullable=false)
-    private long userId;
+    @Setter(AccessLevel.PACKAGE)
+    @OneToOne(fetch=FetchType.LAZY)
+    @MapsId
+    private User user;
 
-    @Column(name="game_id", nullable=false)
-    private long gameId;
+    @Setter(AccessLevel.PACKAGE)
+    @OneToOne(fetch=FetchType.LAZY)
+    @Column(name="game_info")
+    @MapsId
+    private GameInfo gameInfo;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -72,8 +77,6 @@ public class Subscription {
         if (o == null || getClass() != o.getClass()) return false;
         Subscription that = (Subscription) o;
         return subId == that.subId &&
-                userId == that.userId &&
-                gameId == that.gameId &&
                 status == that.status &&
                 activationTime.equals(that.activationTime) &&
                 expirationTime.equals(that.expirationTime);
@@ -81,5 +84,5 @@ public class Subscription {
 
     @Override
     public int hashCode()
-    { return Objects.hash(subId, userId, gameId, status, activationTime, expirationTime); }
+    { return Objects.hash(subId, gameInfo, user, status, activationTime, expirationTime); }
 }

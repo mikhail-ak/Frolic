@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Setter
@@ -67,4 +68,21 @@ public class GameInfo {
         this.genres.remove(genre);
         genre.getGameInfos().remove(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameInfo gameInfo = (GameInfo) o;
+        return gameId == gameInfo.gameId &&
+                title.equals(gameInfo.title) &&
+                Objects.equals(genres, gameInfo.genres) &&
+                Objects.equals(description, gameInfo.description) &&
+                Objects.equals(releaseDate, gameInfo.releaseDate) &&
+                pricePerDay.equals(gameInfo.pricePerDay);
+    }
+
+    @Override
+    public int hashCode()
+    { return Objects.hash(gameId, title, genres, description, releaseDate, pricePerDay); }
 }
