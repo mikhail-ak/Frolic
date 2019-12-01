@@ -33,9 +33,8 @@ public class Subscription {
 
     @Setter(AccessLevel.PACKAGE)
     @OneToOne(fetch=FetchType.LAZY)
-    @Column(name="game_info")
     @MapsId
-    private GameInfo gameInfo;
+    private GameInfo info;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -84,5 +83,5 @@ public class Subscription {
 
     @Override
     public int hashCode()
-    { return Objects.hash(subId, gameInfo, user, status, activationTime, expirationTime); }
+    { return Objects.hash(subId, info, user, status, activationTime, expirationTime); }
 }

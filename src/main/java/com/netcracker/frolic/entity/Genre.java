@@ -8,7 +8,7 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
+//TODO: implement equals and hashCode -- it is used in GameInfo.equals(); there is also a HashSet<Genre> in there
 @Setter(AccessLevel.PRIVATE)
 @Entity
 @Table(name="genre")
@@ -23,9 +23,10 @@ public class Genre {
     private String genreName;
 
     // жанр хранит большое число ссылок на игры, но по дефолту там FetchType=LAZY, так что не должно быть проблемой
-    @ManyToMany(mappedBy="genres")
+    @ManyToMany(mappedBy = "genres")
     private Set<GameInfo> gameInfos = new HashSet<>();
 
-    public Set<GameInfo> getGameInfos()
-    { return this.gameInfos; }
+    public Set<GameInfo> getGameInfos() {
+        return this.gameInfos;
+    }
 }

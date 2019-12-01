@@ -20,6 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name="game_info")
 public class GameInfo {
+
     @Setter(AccessLevel.NONE)
     @Id @GeneratedValue
     @Column(name="game_id")
@@ -27,7 +28,7 @@ public class GameInfo {
 
     @Setter(AccessLevel.NONE)
     @NaturalId
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     @Size(min=1, max=255)
     private String title;
 
@@ -49,15 +50,22 @@ public class GameInfo {
     private String description;
 
     @Lob
-    @Column(nullable=false)
+    @Column(name = "logo")
     private java.sql.Blob logoBlob;
 
     @Column(name="release_date")
     private LocalDate releaseDate;
 
-    @Column(name="price_per_day", nullable=false)
+    @Column(name="price_per_day", nullable = false)
     @DecimalMin("0.00")
     private BigDecimal pricePerDay;
+
+    public GameInfo(String title, BigDecimal pricePerDay, GameFile gameFile) {
+        this.title = title;
+        this.pricePerDay = pricePerDay;
+    }
+
+    GameInfo() {}
 
     public void addGenre(Genre genre) {
         this.genres.add(genre);
@@ -83,6 +91,7 @@ public class GameInfo {
     }
 
     @Override
-    public int hashCode()
-    { return Objects.hash(gameId, title, genres, description, releaseDate, pricePerDay); }
+    public int hashCode() {
+        return Objects.hash(gameId, title, genres, description, releaseDate, pricePerDay);
+    }
 }
