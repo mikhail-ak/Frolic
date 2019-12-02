@@ -33,17 +33,18 @@ public class ApplicationConfig {
     @Value("${url}")
     private String url;
     @Value("${user}")
-    private String username;
+    private String user;
     @Value("${password}")
     private String password;
 
     @Bean(destroyMethod="close")
     public DataSource dataSource() {
+
         try {
             BasicDataSource dataSource = new BasicDataSource();
             dataSource.setDriverClassName(driverClassName);
             dataSource.setUrl(url);
-            dataSource.setUsername(username);
+            dataSource.setUsername(user);
             dataSource.setPassword(password);
             return dataSource;
         } catch (Exception dataSourceFail) {

@@ -1,6 +1,5 @@
 package com.netcracker.frolic.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +7,7 @@ import javax.persistence.*;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 
-@Setter(AccessLevel.PRIVATE)
+@Setter
 @Getter
 @Entity
 @Table(name="game_file")
@@ -32,7 +31,11 @@ public class GameFile {
         setInstallationFileBlob(installationFileBlob);
     }
 
-    public void setInstallationFileBlob(Blob blob) {
+    public void setInfo(GameInfo gameInfo) {
+        this.info = gameInfo;
+    }
+
+    void setInstallationFileBlob(Blob blob) {
         installationFileBlob = blob;
         lastUpdated = LocalDateTime.now();
     }

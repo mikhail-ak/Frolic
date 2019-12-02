@@ -2,6 +2,7 @@ package com.netcracker.frolic.repository;
 
 import com.netcracker.frolic.entity.GameInfo;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository("gameInfoRepo")
 public class GameInfoRepoImpl implements GameInfoRepo {
 
+    @Autowired
     private SessionFactory sessionFactory;
 
     @Override

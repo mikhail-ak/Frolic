@@ -2,6 +2,7 @@ package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.GameFile;
 import com.netcracker.frolic.entity.GameInfo;
+import com.netcracker.frolic.entity.Rating;
 import com.netcracker.frolic.repository.GameFileRepo;
 import com.netcracker.frolic.repository.GameInfoRepo;
 import org.slf4j.Logger;
@@ -31,8 +32,7 @@ public class DbInitializer {
     public void initDB() {
         logger.info("starting DB initialization now");
 
-        GameFile gameFile = new GameFile(
-                new Blob() {
+        Blob giantUglyThing = new Blob() {
             @Override
             public long length() throws SQLException {
                 return 0;
@@ -87,9 +87,13 @@ public class DbInitializer {
             public InputStream getBinaryStream(long l, long l1) throws SQLException {
                 return null;
             }
-        });
+        };
+        GameFile gameFile = new GameFile(giantUglyThing);
+        GameInfo gameInfo = new GameInfo("Test game", BigDecimal.TEN);
+        gameInfo.setFile(gameFile);
+        gameInfo.setRating(new Rating());
+        gameFile.setInfo(gameInfo);
         gameFileRepo.save(gameFile);
-        GameInfo gameInfo = new GameInfo("Test game", BigDecimal.TEN, gameFile);
         gameInfoRepo.save(gameInfo);
 
         logger.info("Database initilization finished.");

@@ -10,6 +10,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -21,18 +22,21 @@ import java.util.Set;
 @Table(name="game_info")
 public class GameInfo {
 
-    @Setter(AccessLevel.NONE)
+    @Setter(AccessLevel.PRIVATE)
     @Id @GeneratedValue
     @Column(name="game_id")
     private long gameId;
 
-    @Setter(AccessLevel.NONE)
     @NaturalId
     @Column(nullable = false, unique = true)
     @Size(min=1, max=255)
     private String title;
 
-    @Setter(AccessLevel.NONE)
+    @OneToOne(mappedBy = "info", cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY, optional = false)
+    private GameFile file;
+
+    @Setter(AccessLevel.PRIVATE)
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
@@ -51,7 +55,7 @@ public class GameInfo {
 
     @Lob
     @Column(name = "logo")
-    private java.sql.Blob logoBlob;
+    private Blob logoBlob;
 
     @Column(name="release_date")
     private LocalDate releaseDate;
@@ -60,7 +64,7 @@ public class GameInfo {
     @DecimalMin("0.00")
     private BigDecimal pricePerDay;
 
-    public GameInfo(String title, BigDecimal pricePerDay, GameFile gameFile) {
+    public GameInfo(String title, BigDecimal pricePerDay) {
         this.title = title;
         this.pricePerDay = pricePerDay;
     }
