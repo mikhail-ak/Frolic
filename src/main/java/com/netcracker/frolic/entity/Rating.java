@@ -15,11 +15,11 @@ import javax.validation.constraints.Min;
 public class Rating {
     public static final int MAX_RATING = 100;
 
-    @Column(name="ratings_sum", nullable=false)
+    @Column(name="ratings_sum", nullable=false, columnDefinition="int default 0")
     @Min(0)
     private long ratingsSum;
 
-    @Column(name="ratings_count", nullable = false)
+    @Column(name="ratings_count", nullable=false, columnDefinition="int default 0")
     @Min(0)
     private long ratingsCount;
 

@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackageClasses=Application.class)
 @EnableTransactionManagement
+@ComponentScan(basePackageClasses = Application.class)
 @PropertySource("classpath:jdbc.properties")
 public class ApplicationConfig {
 
@@ -39,7 +39,6 @@ public class ApplicationConfig {
 
     @Bean(destroyMethod="close")
     public DataSource dataSource() {
-
         try {
             BasicDataSource dataSource = new BasicDataSource();
             dataSource.setDriverClassName(driverClassName);
@@ -53,14 +52,16 @@ public class ApplicationConfig {
         }
     }
 
-    @Bean public SessionFactory sessionFactory() {
+    @Bean
+    public SessionFactory sessionFactory() {
         return new LocalSessionFactoryBuilder(dataSource())
                 .scanPackages("com.netcracker.frolic.entity")
                 .addProperties(hibernateProperties())
                 .buildSessionFactory();
     }
 
-    @Bean public PlatformTransactionManager transactionManager() throws IOException {
+    @Bean
+    public PlatformTransactionManager transactionManager() throws IOException {
         return new HibernateTransactionManager(sessionFactory());
     }
 

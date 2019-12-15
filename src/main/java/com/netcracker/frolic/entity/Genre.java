@@ -1,32 +1,41 @@
 package com.netcracker.frolic.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import com.netcracker.frolic.repository.Identifiable;
+import lombok.Data;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-//TODO: implement equals and hashCode -- it is used in GameInfo.equals(); there is also a HashSet<Genre> in there
-@Setter(AccessLevel.PRIVATE)
+
+@Data
 @Entity
 @Table(name="genre")
-public class Genre {
+public class Genre implements Identifiable<Long> {
     @Id @GeneratedValue
-    @Column(name="genre_id")
-    private long genreId;
+    private long id;
 
-    @Getter
     @NaturalId
     @Column(unique=true, nullable=false, name="genre_name")
     private String genreName;
 
-    // жанр хранит большое число ссылок на игры, но по дефолту там FetchType=LAZY, так что не должно быть проблемой
-    @ManyToMany(mappedBy = "genres")
+    @ManyToMany(mappedBy="genres")
     private Set<GameInfo> gameInfos = new HashSet<>();
 
     public Set<GameInfo> getGameInfos() {
         return this.gameInfos;
+    }
+
+    public Genre(String genreName) {
+        this.genreName = genreName;
+    }
+
+    public void setInfo(GameInfo info) {
+        this.gameInfos.add(info);
+    }
+
+    @Override
+    public Long getID() {
+        return id;
     }
 }

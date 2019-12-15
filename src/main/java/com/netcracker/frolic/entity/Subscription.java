@@ -1,12 +1,9 @@
 package com.netcracker.frolic.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * подписка начинается раньше чем заканчивается
@@ -15,10 +12,8 @@ import java.util.Objects;
  * будучи один раз отменённой, подписка больше не изменит статус -- можно только создать другую
  * подписки будут храниться в HashMap в классе User, поэтому реализованы hashCode и equals.
  */
-@Setter(AccessLevel.PRIVATE)
-@Getter
+@Data
 @Entity
-@Table(name="subscription")
 public class Subscription {
     enum SubStatus { ACTIVE, EXPIRED, CANCELLED }
 
@@ -26,18 +21,14 @@ public class Subscription {
     @Column(name="sub_id")
     private long subId;
 
-    @Setter(AccessLevel.PACKAGE)
-    @OneToOne(fetch=FetchType.LAZY)
     @MapsId
+    @OneToOne(fetch=FetchType.LAZY)
     private User user;
 
-    @Setter(AccessLevel.PACKAGE)
-    @OneToOne(fetch=FetchType.LAZY)
     @MapsId
+    @OneToOne(fetch=FetchType.LAZY)
     private GameInfo info;
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @Column(nullable=false)
     @Enumerated(EnumType.STRING)
     private SubStatus status;
@@ -69,19 +60,4 @@ public class Subscription {
 
     public void cancel()
     { this.status = SubStatus.CANCELLED; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Subscription that = (Subscription) o;
-        return subId == that.subId &&
-                status == that.status &&
-                activationTime.equals(that.activationTime) &&
-                expirationTime.equals(that.expirationTime);
-    }
-
-    @Override
-    public int hashCode()
-    { return Objects.hash(subId, info, user, status, activationTime, expirationTime); }
 }

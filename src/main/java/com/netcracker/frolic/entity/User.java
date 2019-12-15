@@ -1,34 +1,30 @@
 package com.netcracker.frolic.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name="users")
 public class User {
     enum AccountStatus { BANNED, CUSTOMER, EMPLOYEE, ADMIN }
 
     @Id @GeneratedValue
-    @Column(name="user_id")
-    private long userId;
+    private long id;
 
     @NaturalId
-    @Column(nullable=false, unique=true)
     @Size(min=3, max=21)
+    @Column(nullable=false, unique=true)
     private String name;
 
-    @Column(nullable=false, unique=true)
     @Email
+    @Column(nullable=false, unique=true)
     private String email;
 
     @Column(nullable=false)
@@ -40,23 +36,6 @@ public class User {
     private AccountStatus accountStatus;
 
     @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="id")
     private Set<Subscription> subscriptions = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return userId == user.userId &&
-                name.equals(user.name) &&
-                email.equals(user.email) &&
-                password.equals(user.password) &&
-                accountStatus == user.accountStatus &&
-                Objects.equals(subscriptions, user.subscriptions);
-    }
-
-    @Override
-    public int hashCode()
-    { return Objects.hash(userId, name, email, password, accountStatus, subscriptions); }
 }
