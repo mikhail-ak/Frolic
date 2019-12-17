@@ -1,6 +1,8 @@
 package com.netcracker.frolic.entity;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,40 +14,35 @@ import java.time.LocalDateTime;
  * будучи один раз отменённой, подписка больше не изменит статус -- можно только создать другую
  * подписки будут храниться в HashMap в классе User, поэтому реализованы hashCode и equals.
  */
-@Data
+@Getter
+@Setter(AccessLevel.PRIVATE)
 @Entity
+@Table(name = "subscription")
 public class Subscription {
     enum SubStatus { ACTIVE, EXPIRED, CANCELLED }
 
-    @Id
-    @Column(name="sub_id")
-    private long subId;
+    @Id @GeneratedValue
+    private long id;
 
-    @MapsId
-    @OneToOne(fetch=FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @MapsId
-    @OneToOne(fetch=FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "info_id", nullable = false)
     private GameInfo info;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SubStatus status;
 
-    @Column(nullable=false, name="activation_time")
+    @Column(nullable = false, name = "activation_time")
     private LocalDateTime activationTime;
 
-    @Column(nullable=false, name="expiration_time")
+    @Column(nullable = false, name = "expiration_time")
     private LocalDateTime expirationTime;
 
     public void setActivityPeriod(LocalDateTime begin, LocalDateTime end) {
-        LocalDateTime now = LocalDateTime.now();
-        if (begin.isBefore(now) || end.isBefore(now))
-            throw new IllegalArgumentException("Activity period must be in the future");
-        if (end.isBefore(begin) || end.isEqual(begin))
-            throw new IllegalArgumentException("Illegal activity period");
-
         activationTime = begin;
         expirationTime = end;
     }

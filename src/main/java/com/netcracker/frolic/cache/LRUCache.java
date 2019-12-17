@@ -1,8 +1,8 @@
-package com.netcracker.frolic.repository;
+package com.netcracker.frolic.cache;
 
 import org.apache.commons.collections4.map.LRUMap;
 
-public class LRUCache<K, V extends Identifiable<K>> implements Cache<K, V> {
+public class LRUCache <K, V extends Identifiable<K>> implements Cache<K, V> {
 
     private final LRUMap<K, V> cache;
 
@@ -11,13 +11,13 @@ public class LRUCache<K, V extends Identifiable<K>> implements Cache<K, V> {
     }
 
     @Override
-    public V getByID(K id) {
+    public V getbyId(K id) {
         return cache.get(id);
     }
 
     @Override
     public void saveOrUpdate(V object) {
-        cache.put(object.getID(), object);
+        cache.put(object.getId(), object);
     }
 
     @Override

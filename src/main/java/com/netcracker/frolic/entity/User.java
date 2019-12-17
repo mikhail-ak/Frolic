@@ -1,41 +1,42 @@
 package com.netcracker.frolic.entity;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     enum AccountStatus { BANNED, CUSTOMER, EMPLOYEE, ADMIN }
 
     @Id @GeneratedValue
+    @Setter(AccessLevel.NONE)
     private long id;
 
     @NaturalId
-    @Size(min=3, max=21)
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Email
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable=false)
-    @Size(min=8, max=31)
+    @Column(nullable = false)
     private String password;
 
-    @Column(nullable=false, name="account_status")
+    @Column(nullable = false, name = "account_status")
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
-    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="id")
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Subscription> subscriptions = new HashSet<>();
 }

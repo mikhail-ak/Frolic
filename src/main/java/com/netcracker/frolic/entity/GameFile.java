@@ -1,62 +1,51 @@
 package com.netcracker.frolic.entity;
 
-import com.netcracker.frolic.repository.Identifiable;
+import com.netcracker.frolic.cache.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Blob;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-@Getter
-@Setter
+/**
+ * Содержит файл с игрой и дату последнего его обновления.
+ * Дата обновления устанавливается автоматически при добавлении/изменении файла.
+ * Соответствующие земпляры GameInfo и GameFile имеют одинаковые id.
+ */
 @Entity
-@Table(name="game_file")
-public class GameFile implements Identifiable<Long> {
+@Table(name = "game_file")
+public class GameFile implements Identifiable<Long>, Serializable {
 
     @Id
-    private long id;
+    private long info_id;
 
-    @MapsId
-    @OneToOne(fetch=FetchType.LAZY)
+    @MapsId @Getter @Setter
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     private GameInfo info;
 
-    @Column(nullable=false, name="installation_file")
+    @Getter
+    @Column(nullable = false, name = "installation_file")
     private Blob installationFile;
 
+    @Getter
     @Column(name="last_updated_on")
     private LocalDateTime lastUpdatedOn;
 
-    public GameFile(Blob installationFile) {
-        setInstallationFileBlob(installationFile);
+    public GameFile() { }
+
+    public GameFile(Blob installationFile)
+    { setInstallationFile(installationFile); }
+
+    public void setInstallationFile(Blob installationFile) {
+        this.installationFile = installationFile;
+        this.lastUpdatedOn = LocalDateTime.now();
     }
 
-    public void setInfo(GameInfo gameInfo) {
-        this.info = gameInfo;
-    }
+    @Override public Long getId()
+    { return this.info_id; }
 
-    void setInstallationFileBlob(Blob file) {
-        installationFile = file;
-        lastUpdatedOn = LocalDateTime.now();
-    }
-
-    @Override
-    public Long getID()
-    { return  this.id; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GameFile file = (GameFile) o;
-        return id == file.id &&
-                Objects.equals(info, file.info) &&
-                lastUpdatedOn.equals(file.lastUpdatedOn);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, lastUpdatedOn);
-    }
+    @Override public String toString()
+    { return "Installation file of the " + info.getTitle() + " game. Last updated on " + lastUpdatedOn; }
 }

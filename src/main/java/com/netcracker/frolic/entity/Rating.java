@@ -33,4 +33,7 @@ public class Rating {
         ratingsSum += rating;
         ratingsCount++;
     }
+
+    @Override public String toString()
+    { return "Rating: " + getRating(); }
 }

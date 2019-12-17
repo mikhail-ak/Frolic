@@ -1,7 +1,7 @@
-package com.netcracker.frolic.repository;
+package com.netcracker.frolic.cache;
 
 public interface Cache<K, V extends Identifiable<K>> {
-    V getByID(K id);
+    V getbyId(K id);
     void saveOrUpdate(V object);
     boolean containsObjectWithID(K id);
 }
