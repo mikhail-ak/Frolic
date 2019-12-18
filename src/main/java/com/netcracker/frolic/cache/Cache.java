@@ -1,7 +1,11 @@
 package com.netcracker.frolic.cache;
 
-public interface Cache<K, V extends Identifiable<K>> {
-    V getbyId(K id);
+import java.io.Serializable;
+import java.util.Optional;
+
+public interface Cache<K extends Serializable, V extends Identifiable<K>> {
+    Optional<V> getById(K id);
     void saveOrUpdate(V object);
+    void remove(K id);
     boolean containsObjectWithId(K id);
 }

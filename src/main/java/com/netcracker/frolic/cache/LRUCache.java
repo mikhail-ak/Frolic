@@ -2,25 +2,25 @@ package com.netcracker.frolic.cache;
 
 import org.apache.commons.collections4.map.LRUMap;
 
-public class LRUCache <K, V extends Identifiable<K>> implements Cache<K, V> {
+import java.io.Serializable;
+import java.util.Optional;
+
+public class LRUCache <K extends Serializable, V extends Identifiable<K>> implements Cache<K, V> {
 
     private final LRUMap<K, V> cache;
 
-    LRUCache(int capacity) {
-        cache = new LRUMap<>(capacity);
-    }
+    public LRUCache(int capacity)
+    { cache = new LRUMap<>(capacity); }
 
-    @Override
-    public V getbyId(K id) {
-        return cache.get(id);
-    }
+    public Optional<V> getById(K id)
+    { return Optional.ofNullable(cache.get(id)); }
 
-    @Override
-    public void saveOrUpdate(V object) {
-        cache.put(object.getId(), object);
-    }
+    public void saveOrUpdate(V object)
+    { cache.put(object.getId(), object); }
 
-    @Override
+    public void remove(K id)
+    { cache.remove(id); }
+
     public boolean containsObjectWithId(K id) {
         return cache.containsKey(id);
     }

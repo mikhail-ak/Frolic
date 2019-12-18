@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
+//TODO должен быть отдельный метод для проверки новосозданного экземпляра, проводящий его через
+// creation time check из Validatora.
 @Transactional
 @Service("jpaSubscriptionService")
 public class SubscriptionServiceImpl implements SubscriptionService {
