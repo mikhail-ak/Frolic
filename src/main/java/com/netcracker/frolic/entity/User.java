@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
-    enum AccountStatus { BANNED, CUSTOMER, EMPLOYEE, ADMIN }
+    public enum AccountStatus { BANNED, CUSTOMER, EMPLOYEE, ADMIN }
 
     @Id @GeneratedValue
     @Setter(AccessLevel.NONE)

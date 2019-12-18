@@ -1,64 +1,40 @@
 package com.netcracker.frolic.validator;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Проверить экземпляр класса на валидность, используя цепочку методов, например
- * ValidatorImpl.check(instanceToCheck)
- *              .IfValid(checkedInstance -> { do some work })
- *              .orGetError(logger::log);
- *
- * Метод isValid может реализовывать проверку произвольных классов.
- * От него требуется добавление в errorBuilder сообщений об ошибках, с помощью метода error(). Если этот метод
- * был вызван хотя бы раз, validityFlag выставляется в false. Затем значение
- * этого флага нужно вернуть из метода isValid, вызвав getValidityFlag.
+ * Определив метод validate, можно задать логику проверки произвольных классов.
+ * Внутри validate при наличии ошибок необходимо передавать краткие сообщения о них с помощью метода error.
+ * После хотя бы одного вызова метода error проверяемый экзеипляр класса считается невалидным, а метод getIfValid
+ * вернёт пустой Optional, при этом вызвав errorMessageHandler, задающий логику обработки сообщения об ошибке.
  *
  * Сообщения об ошибках предполагается логировать для последующего анализа администратором. Также их можно отправлять
- * клиенту, если он взаимодействует напрямую с REST API игнорируя клиент, не разрешающий отправку невалидных данных.
+ * клиенту, если он взаимодействует напрямую с REST API и вводит невалидные данные.
  * Сами сообщения об ошибках должны быть краткими и с маленькой буквы, например "title is too short".
+ * Это удобно для формирования сообщения о нескольких ошибках с их перечислением.
  * @param <T> проверяемый класс
  */
 public abstract class Validator<T> {
-
-    private static class CheckedEntity<T> {
-        private final T checkedEntity;
-        private final boolean isValid;
-        private final String errorReasons;
-
-        private CheckedEntity(T checkedEntity, boolean isValid, String errorReasons) {
-            this.checkedEntity = checkedEntity;
-            this.isValid = isValid;
-            this.errorReasons = errorReasons;
-        }
-
-        public CheckedEntity<T> ifValid(Consumer<T> validEntityHandler) {
-            if (this.isValid) validEntityHandler.accept(checkedEntity);
-            return this;
-        }
-
-        public CheckedEntity<T> orGetErrors(Consumer<String> errorHandler) {
-            if (!this.isValid) errorHandler.accept(errorReasons);
-            return this;
-        }
-    }
-
     private StringBuilder errorMessageBuilder = new StringBuilder();
-    private boolean validityFlag = true;
+    private Consumer<String> errorMessageHandler;
+    private boolean isValid = true;
 
-    public CheckedEntity<T> check(T checkee) {
-        errorMessageBuilder.delete(errorMessageBuilder.length() -2, errorMessageBuilder.length());
-        return isValid(checkee) ? new CheckedEntity<>(checkee, true, "")
-                : new CheckedEntity<>(null, false, errorMessageBuilder.toString());
+    protected Validator(Consumer<String> errorMessageHandler)
+    { this.errorMessageHandler = errorMessageHandler; }
+
+    public Optional<T> getIfValid(T classToCheck) {
+        this.validate(classToCheck);
+        if (!this.isValid) errorMessageHandler.accept(errorMessageBuilder.toString());
+        return this.isValid ? Optional.of(classToCheck)
+                : Optional.empty();
     }
 
     protected void error(String error) {
         errorMessageBuilder.append(error);
         errorMessageBuilder.append(", ");
-        validityFlag = false;
+        isValid = false;
     }
 
-    protected boolean getValidityFlag()
-    { return validityFlag; }
-
-    protected abstract boolean isValid(T checkee);
+    protected abstract void validate(T classToCheck);
 }

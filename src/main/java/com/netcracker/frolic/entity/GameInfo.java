@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -22,6 +21,7 @@ import java.util.Set;
 @Getter @Setter
 @Table(name = "game_info")
 public class GameInfo implements Identifiable<Long> {
+    public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
     @Id @GeneratedValue
     @Getter(AccessLevel.NONE)
@@ -38,13 +38,8 @@ public class GameInfo implements Identifiable<Long> {
     @Column(name = "price_per_day", nullable = false)
     private BigDecimal pricePerDay;
 
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "game_genre",
-            joinColumns = @JoinColumn(name = "game_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private Set<Genre> genres = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -59,17 +54,6 @@ public class GameInfo implements Identifiable<Long> {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    public void addGenre(Genre genre) {
-        Objects.requireNonNull(genre, "A genre cannot be null");
-        this.genres.add(genre);
-        genre.getGameInfos().add(this);
-    }
-
-    public void removeGenre(Genre genre) {
-        this.genres.remove(genre);
-        genre.getGameInfos().remove(this);
-    }
-
     @Override public Long getId()
     { return this.id; }
 
@@ -83,6 +67,9 @@ public class GameInfo implements Identifiable<Long> {
     @Override public int hashCode()
     { return title.hashCode(); }
 
-    @Override public String toString()
-    { return "Information about the " + title + " game."; }
+    @Override public String toString() {
+        return "Information about the " + title + " game." + "Price: " + pricePerDay + ", genre: " +
+            genre + ", rating: " + rating.getRating() + ", description: " + description +
+                ", release date: " + releaseDate;
+    }
 }

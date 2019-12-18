@@ -57,4 +57,7 @@ public class Subscription {
 
     public void cancel()
     { this.status = SubStatus.CANCELLED; }
+
+    @Override public String toString()
+    { return "subscription id: " + id; }
 }

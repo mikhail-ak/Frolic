@@ -27,7 +27,7 @@ public class FakeCache <K extends Serializable, V extends Identifiable<K>> imple
     }
 
     @Override
-    public boolean containsObjectWithID(K id) {
+    public boolean containsObjectWithId(K id) {
         return this.getbyId(id) != null;
     }
 }

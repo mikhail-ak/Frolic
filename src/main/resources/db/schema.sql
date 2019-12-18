@@ -16,11 +16,6 @@ create table game_file (
     foreign key (info_id) references game_info(id)
 );
 
-create table genre (
-    id bigint primary key,
-    genre_name varchar(255) unique not null
-);
-
 create table game_genre (
     game_id bigint,
     genre_id bigint,

@@ -21,7 +21,7 @@ public class LRUCache <K, V extends Identifiable<K>> implements Cache<K, V> {
     }
 
     @Override
-    public boolean containsObjectWithID(K id) {
+    public boolean containsObjectWithId(K id) {
         return cache.containsKey(id);
     }
 }

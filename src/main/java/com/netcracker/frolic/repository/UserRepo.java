@@ -1,7 +1,10 @@
 package com.netcracker.frolic.repository;
 
-import com.netcracker.frolic.entity.Genre;
+import com.netcracker.frolic.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepo extends CrudRepository<Genre, Long> {
+import java.util.Optional;
+
+public interface UserRepo extends CrudRepository<User, Long> {
+    public Optional<User> findByEmail(String email);
 }
