@@ -6,6 +6,7 @@ create table game_info (
     ratings_count int not null,
     ratings_sum int not null,
     release_date date,
+    genre varchar(255),
     title varchar(255) unique not null
 );
 
@@ -14,14 +15,6 @@ create table game_file (
     last_updated_on timestamp,
     info_id bigint primary key,
     foreign key (info_id) references game_info(id)
-);
-
-create table game_genre (
-    game_id bigint,
-    genre_id bigint,
-    primary key (game_id, genre_id),
-    foreign key (game_id) references game_info(id),
-    foreign key (genre_id) references genre(id)
 );
 
 create table users (

@@ -5,6 +5,7 @@ import com.netcracker.frolic.entity.Rating;
 import com.netcracker.frolic.repository.GameInfoRepo;
 import com.netcracker.frolic.validator.GameInfoValidator;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ import java.util.Optional;
 @Service("jpaGameInfoService")
 public class GameInfoServiceImpl implements GameInfoService {
     @Autowired private GameInfoRepo gameInfoRepo;
-    @Autowired private Logger log;
+    private Logger log = LoggerFactory.getLogger(GameInfoServiceImpl.class);
 
     @Transactional(readOnly = true)
     public Optional<GameInfo> findById(long id)
@@ -46,12 +47,12 @@ public class GameInfoServiceImpl implements GameInfoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GameInfo> findAllByGenre(GameInfo.Genre genre)
-    { return gameInfoRepo.findAllByGenre(genre); }
+    public Page<GameInfo> findAllByGenre(GameInfo.Genre genre, Pageable pageable)
+    { return gameInfoRepo.findAllByGenre(genre, pageable); }
 
     @Transactional(readOnly = true)
-    public Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate)
-    { return gameInfoRepo.findAllByReleaseDate(releaseDate); }
+    public Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate, Pageable pageable)
+    { return gameInfoRepo.findAllByReleaseDate(releaseDate, pageable); }
 
     @Transactional(readOnly = true)
     public Page<GameInfo> findAll(Pageable pageable)

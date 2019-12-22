@@ -27,7 +27,7 @@ import java.util.Properties;
 @EnableJpaRepositories(basePackageClasses = Repository.class)
 public class DataJpaConfig {
 
-    private static Logger logger = LoggerFactory.getLogger(DataJpaConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataJpaConfig.class);
 
     @Bean
     public DataSource dataSource() {

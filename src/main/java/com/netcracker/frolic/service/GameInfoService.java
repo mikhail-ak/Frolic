@@ -16,8 +16,8 @@ public interface GameInfoService {
     void deleteById(long id);
     void updateGameInfo(long id, String title, BigDecimal price, GameInfo.Genre genre,
                         Rating rating, String description, Blob logo, LocalDate releaseDate);
-    Page<GameInfo> findAllByGenre(GameInfo.Genre genre);
-    Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate);
+    Page<GameInfo> findAllByGenre(GameInfo.Genre genre, Pageable pageable);
+    Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate, Pageable pageable);
     Page<GameInfo> findAll(Pageable pageable);
     Optional<GameInfo> save(GameInfo gameInfo);
 }
