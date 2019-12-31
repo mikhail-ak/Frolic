@@ -1,5 +1,6 @@
 package com.netcracker.frolic.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.netcracker.frolic.cache.Identifiable;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class GameInfo implements Identifiable<Long> {
     public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private long id;
@@ -31,6 +32,7 @@ public class GameInfo implements Identifiable<Long> {
     @Column(nullable = false, unique = true, updatable = false)
     private String title;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "info", cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, optional = false)
     private GameFile file;
@@ -41,6 +43,7 @@ public class GameInfo implements Identifiable<Long> {
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
+    @JsonIgnore
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Subscription> subscriptions = new HashSet<>();

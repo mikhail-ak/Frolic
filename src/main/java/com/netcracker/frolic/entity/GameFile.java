@@ -21,7 +21,8 @@ public class GameFile implements Identifiable<Long>, Serializable {
     @Id
     private long info_id;
 
-    @MapsId @Getter @Setter
+    @MapsId
+    @Getter @Setter
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     private GameInfo info;
 

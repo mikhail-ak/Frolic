@@ -10,14 +10,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/game-info")
+@RequestMapping(value = "/game-info", produces = "application/json")
 @PropertySource("classpath:web.properties")
 class GameInfoController {
     private final Logger log = LoggerFactory.getLogger(GameInfoController.class);
@@ -26,12 +23,13 @@ class GameInfoController {
     @Value("${itemsPerPage}")
     private int itemsPerPage;
 
-    @GetMapping
+    @GetMapping("/")
     public Page<GameInfo> getAll() {
+        log.debug("all game info requested");
         return gameInfoService.findAll(PageRequest.of(0, itemsPerPage));
     }
 
-    @GetMapping(value = "/{id}", produces = "application/json")
+    @GetMapping(value = "/{id}")
     public GameInfo findGameInfoById(@PathVariable Long id) {
         return gameInfoService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

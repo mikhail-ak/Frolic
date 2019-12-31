@@ -2,6 +2,7 @@ package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.GameFile;
 import com.netcracker.frolic.entity.GameInfo;
+import com.netcracker.frolic.entity.Rating;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,10 @@ public class DbInit {
         gameInfo.setPricePerDay(new BigDecimal("4.44"));
         gameInfo.setGenre(GameInfo.Genre.FIRST_PERSON_SHOOTER);
         gameFile.setInfo(gameInfo);
+        gameInfo.setRating(new Rating());
+        gameInfo.setDescription("Some description");
+        gameFileService.save(gameFile);
+        gameInfoService.save(gameInfo);
 
         logger.info("Database initialization finished.");
     }

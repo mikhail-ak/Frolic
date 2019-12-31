@@ -10,14 +10,14 @@ import javax.validation.constraints.Email;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Entity
+@Getter @Setter
 @Table(name = "users")
 public class User {
     public enum AccountStatus { BANNED, CUSTOMER, EMPLOYEE, ADMIN }
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter(AccessLevel.NONE)
     private long id;
 

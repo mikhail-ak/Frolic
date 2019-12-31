@@ -59,8 +59,7 @@ public class GameInfoServiceImpl implements GameInfoService {
     { return gameInfoRepo.findAll(pageable); }
 
     public Optional<GameInfo> save(GameInfo gameInfo) {
-        return new GameInfoValidator(errorMessage -> log
-                .error("Tried to save invalid game info: {}", errorMessage))
+        return new GameInfoValidator(errorMessage -> log.error("Tried to save invalid game info: {}", errorMessage))
                 .getIfValid(gameInfo)
                 .map(info -> gameInfoRepo.save(info));
     }

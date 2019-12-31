@@ -21,7 +21,8 @@ import java.time.LocalDateTime;
 public class Subscription {
     enum SubStatus { ACTIVE, EXPIRED, CANCELLED }
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne
