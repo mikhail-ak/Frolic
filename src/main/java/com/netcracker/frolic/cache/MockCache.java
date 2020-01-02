@@ -11,8 +11,7 @@ import java.util.Optional;
  */
 public class MockCache<K extends Serializable, V extends Identifiable<K>> implements Cache<K, V> {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @Autowired SessionFactory sessionFactory;
 
     final Class<V> class_;
 

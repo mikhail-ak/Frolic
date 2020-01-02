@@ -1,6 +1,8 @@
 package com.netcracker.frolic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.netcracker.frolic.cache.Identifiable;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,9 +26,9 @@ import java.util.Set;
 public class GameInfo implements Identifiable<Long> {
     public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private long id;
 
     @Column(nullable = false, unique = true, updatable = false)
@@ -54,6 +56,7 @@ public class GameInfo implements Identifiable<Long> {
 
     private Blob logo;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "release_date")
     private LocalDate releaseDate;
 

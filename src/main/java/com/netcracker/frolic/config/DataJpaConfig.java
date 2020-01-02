@@ -23,7 +23,6 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackageClasses = Application.class)
 @EnableJpaRepositories(basePackageClasses = Repository.class)
 public class DataJpaConfig {
 

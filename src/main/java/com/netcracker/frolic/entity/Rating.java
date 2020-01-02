@@ -1,5 +1,6 @@
 package com.netcracker.frolic.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import javax.persistence.Transient;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @Embeddable
-public class Rating {
+public class Rating implements Comparable<Rating> {
     public static final int MAX_RATING = 100;
 
     @Column(name="ratings_sum", nullable=false, columnDefinition="int default 0")
@@ -20,9 +21,17 @@ public class Rating {
     @Column(name="ratings_count", nullable=false, columnDefinition="int default 0")
     private long ratingsCount;
 
+    public Rating(long ratingsSum, long ratingsCount) {
+        this.ratingsSum = ratingsSum;
+        this.ratingsCount = ratingsCount;
+    }
+
+    public Rating() { }
+
     @Transient
-    public long getRating()
-    { return (ratingsCount == 0) ? 0 : ratingsSum / ratingsCount; }
+    @JsonValue
+    public int getRating()
+    { return (int) ((ratingsCount == 0) ? 0 : ratingsSum / ratingsCount); }
 
     public void add(int rating) {
         if (rating < 0  ||  rating > MAX_RATING)
@@ -33,4 +42,9 @@ public class Rating {
 
     @Override public String toString()
     { return "Rating: " + getRating(); }
+
+    @Override
+    public int compareTo(Rating other) {
+        return this.getRating() - other.getRating();
+    }
 }
