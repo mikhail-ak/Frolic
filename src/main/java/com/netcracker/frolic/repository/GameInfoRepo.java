@@ -10,4 +10,5 @@ import java.time.LocalDateTime;
 public interface GameInfoRepo extends JpaRepository<GameInfo, Long> {
     public Page<GameInfo> findAllByGenre(GameInfo.Genre genre, Pageable pageable);
     public Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate, Pageable pageable);
+    Page<GameInfo> findByTitleContaining(String titlePiece, Pageable pageable);
 }

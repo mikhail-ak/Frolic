@@ -51,8 +51,8 @@ public class GameInfoServiceImpl implements GameInfoService {
     { return gameInfoRepo.findAllByGenre(genre, pageable); }
 
     @Transactional(readOnly = true)
-    public Page<GameInfo> findAllByReleaseDate(LocalDateTime releaseDate, Pageable pageable)
-    { return gameInfoRepo.findAllByReleaseDate(releaseDate, pageable); }
+    public Page<GameInfo> findByTitleContaining(String titlePiece, Pageable pageable)
+    { return gameInfoRepo.findByTitleContaining(titlePiece, pageable); }
 
     @Transactional(readOnly = true)
     public Page<GameInfo> findAll(Pageable pageable)
