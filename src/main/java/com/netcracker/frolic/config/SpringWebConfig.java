@@ -1,6 +1,12 @@
 package com.netcracker.frolic.config;
 
 import com.netcracker.frolic.Application;
+import com.netcracker.frolic.controller.GameInfoValidator;
+import com.netcracker.frolic.controller.QueryParamResolver;
+import com.netcracker.frolic.controller.QueryParamResolverImpl;
+import com.netcracker.frolic.controller.Validator;
+import com.netcracker.frolic.entity.GameInfo;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -16,11 +22,11 @@ import javax.servlet.ServletRegistration;
 @EnableWebMvc
 @ComponentScan(basePackageClasses = Application.class)
 @PropertySource("classpath:cache.properties")
-public class SpringAppConfig implements WebApplicationInitializer {
+public class SpringWebConfig implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(SpringAppConfig.class, DataJpaConfig.class);
+        context.register(SpringWebConfig.class, DataJpaConfig.class);
         context.setServletContext(servletContext);
 
         ServletRegistration.Dynamic dispatcher =
@@ -28,4 +34,12 @@ public class SpringAppConfig implements WebApplicationInitializer {
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
     }
+
+    @Bean
+    public QueryParamResolver getDefaultQueryParamResolver()
+    { return new QueryParamResolverImpl(); }
+
+    @Bean(name = "gameInfoValidator")
+    public Validator<GameInfo> getGameInfoValidator()
+    { return new GameInfoValidator(); }
 }

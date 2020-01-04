@@ -2,7 +2,7 @@ package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.repository.UserRepo;
-import com.netcracker.frolic.validator.UserValidator;
+import com.netcracker.frolic.controller.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +37,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByEmail(String email)
     { return userRepo.findByEmail(email); }
 
-    public Optional<User> save(User user) {
-        return new UserValidator(errorMessage -> log
-                .error("Tried to save invalid user info: {}", errorMessage))
-                .getIfValid(user)
-                .map(user_ -> userRepo.save(user_));
+    public User save(User user) {
+        return userRepo.save(user);
     }
 }

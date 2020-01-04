@@ -1,16 +1,13 @@
-package com.netcracker.frolic.validator;
+package com.netcracker.frolic.controller;
 
+import com.netcracker.frolic.controller.Validator;
 import com.netcracker.frolic.entity.GameInfo;
 
 import java.math.BigDecimal;
-import java.util.function.Consumer;
 
 public class GameInfoValidator extends Validator<GameInfo> {
-
-    public GameInfoValidator(Consumer<String> errorMessageHandler)
-    { super(errorMessageHandler); }
-
-    @Override protected void validate(GameInfo gameInfo) {
+    @Override
+    protected void validate(GameInfo gameInfo) {
         String title = gameInfo.getTitle();
         if (title.length() < 1) error("title is too short");
         else if (title.length() > 255) error("title is too long");

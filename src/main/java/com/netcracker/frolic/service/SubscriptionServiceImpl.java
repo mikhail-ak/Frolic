@@ -2,7 +2,7 @@ package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.Subscription;
 import com.netcracker.frolic.repository.SubscriptionRepo;
-import com.netcracker.frolic.validator.SubscriptionValidator;
+import com.netcracker.frolic.controller.SubscriptionValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +39,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public Page<Subscription> findAllByUserId(long userId, Pageable pageable)
     { return subscriptionRepo.findAllByUserId(userId, pageable); }
 
-    public Optional<Subscription> save(Subscription sub) {
-        return new SubscriptionValidator(errorMessage -> log
-                .error("Tried to save invalid subscription info: {}", errorMessage))
-                .getIfValid(sub)
-                .map(subscription -> subscriptionRepo.save(subscription));
+    public Subscription save(Subscription sub) {
+        return subscriptionRepo.save(sub);
     }
 }

@@ -3,7 +3,7 @@ package com.netcracker.frolic.service;
 import com.netcracker.frolic.entity.GameInfo;
 import com.netcracker.frolic.entity.Rating;
 import com.netcracker.frolic.repository.GameInfoRepo;
-import com.netcracker.frolic.validator.GameInfoValidator;
+import com.netcracker.frolic.controller.GameInfoValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Transactional
@@ -58,9 +57,6 @@ public class GameInfoServiceImpl implements GameInfoService {
     public Page<GameInfo> findAll(Pageable pageable)
     { return gameInfoRepo.findAll(pageable); }
 
-    public Optional<GameInfo> save(GameInfo gameInfo) {
-        return new GameInfoValidator(errorMessage -> log.error("Tried to save invalid game info: {}", errorMessage))
-                .getIfValid(gameInfo)
-                .map(info -> gameInfoRepo.save(info));
-    }
+    public GameInfo save(GameInfo gameInfo)
+    { return gameInfoRepo.save(gameInfo); }
 }
