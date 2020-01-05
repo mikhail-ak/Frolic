@@ -1,37 +1,32 @@
 package com.netcracker.frolic.entity;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Embeddable
-public class Rating implements Comparable<Rating> {
+public class Rating {
     public static final int MAX_RATING = 100;
 
-    @Column(name="ratings_sum", nullable=false, columnDefinition="int default 0")
+    @Column(name = "ratings_sum", nullable = false)
     private long ratingsSum;
 
-    @Column(name="ratings_count", nullable=false, columnDefinition="int default 0")
+    @Column(name = "ratings_count", nullable = false)
     private long ratingsCount;
+
+    @JsonValue
+    @Formula("ratings_sum / ratings_count")
+    private long rating;
 
     public Rating(long ratingsSum, long ratingsCount) {
         this.ratingsSum = ratingsSum;
         this.ratingsCount = ratingsCount;
     }
-
-    public Rating() { }
-
-    @Transient
-    @JsonValue
-    public int getRating()
-    { return (int) ((ratingsCount == 0) ? 0 : ratingsSum / ratingsCount); }
 
     public void add(int rating) {
         if (rating < 0  ||  rating > MAX_RATING)
@@ -40,11 +35,7 @@ public class Rating implements Comparable<Rating> {
         ratingsCount++;
     }
 
-    @Override public String toString()
-    { return "Rating: " + getRating(); }
-
     @Override
-    public int compareTo(Rating other) {
-        return this.getRating() - other.getRating();
-    }
+    public String toString()
+    { return "Rating: " + rating; }
 }

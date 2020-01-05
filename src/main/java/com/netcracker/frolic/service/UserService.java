@@ -9,4 +9,5 @@ public interface UserService {
     void updateUser(long userId, User.AccountStatus status, String password, String email);
     Optional<User> findByEmail(String email);
     User save(User gameInfo);
+    boolean existsById(long id);
 }

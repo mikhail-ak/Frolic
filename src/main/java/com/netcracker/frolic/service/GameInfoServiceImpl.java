@@ -3,10 +3,9 @@ package com.netcracker.frolic.service;
 import com.netcracker.frolic.entity.GameInfo;
 import com.netcracker.frolic.entity.Rating;
 import com.netcracker.frolic.repository.GameInfoRepo;
-import com.netcracker.frolic.controller.GameInfoValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.netcracker.frolic.validator.Validator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,11 +16,18 @@ import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.Optional;
 
+@Slf4j
 @Transactional
 @Service("jpaGameInfoService")
 public class GameInfoServiceImpl implements GameInfoService {
-    @Autowired private GameInfoRepo gameInfoRepo;
-    private Logger log = LoggerFactory.getLogger(GameInfoServiceImpl.class);
+    private final GameInfoRepo gameInfoRepo;
+    private final Validator<GameInfo> validator;
+
+    GameInfoServiceImpl(GameInfoRepo gameInfoRepo,
+                        @Qualifier("gameInfoValidator") Validator<GameInfo> validator) {
+        this.gameInfoRepo = gameInfoRepo;
+        this.validator = validator;
+    }
 
     @Transactional(readOnly = true)
     public Optional<GameInfo> findById(long id)
@@ -57,6 +63,13 @@ public class GameInfoServiceImpl implements GameInfoService {
     public Page<GameInfo> findAll(Pageable pageable)
     { return gameInfoRepo.findAll(pageable); }
 
-    public GameInfo save(GameInfo gameInfo)
-    { return gameInfoRepo.save(gameInfo); }
+    @Transactional(readOnly = true)
+    public boolean existsById(long id)
+    { return gameInfoRepo.existsById(id); }
+
+    public GameInfo save(GameInfo gameInfo) {
+        return validator.validate(gameInfo)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "An attempt to save an invalid GameInfo: " + validator.getErrorMessage()));
+    }
 }

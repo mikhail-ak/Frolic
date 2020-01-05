@@ -25,4 +25,5 @@ public interface GameInfoService {
     Page<GameInfo> findByTitleContaining(String titlePiece, Pageable pageable);
     Page<GameInfo> findAll(Pageable pageable);
     GameInfo save(GameInfo gameInfo);
+    boolean existsById(long id);
 }

@@ -2,6 +2,7 @@ package com.netcracker.frolic.entity;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Entity
 @Table(name = "subscription")
 public class Subscription {
@@ -43,9 +45,17 @@ public class Subscription {
     @Column(nullable = false, name = "expiration_time")
     private LocalDateTime expirationTime;
 
-    public void setActivityPeriod(LocalDateTime begin, LocalDateTime end) {
+    @Column(nullable = false, name = "creation_time")
+    private LocalDateTime creationTime;
+
+    Subscription(LocalDateTime begin, LocalDateTime end) {
         activationTime = begin;
         expirationTime = end;
+        creationTime = LocalDateTime.now();
+        if (end.isBefore(creationTime))
+            throw new IllegalArgumentException("activity period is fully in the past");
+        if (begin.isBefore(creationTime))
+            throw new IllegalArgumentException("activity period is partially in the past");
     }
 
     public SubStatus getStatus() {

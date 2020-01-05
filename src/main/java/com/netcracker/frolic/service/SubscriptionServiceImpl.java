@@ -1,35 +1,45 @@
 package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.Subscription;
+import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.repository.SubscriptionRepo;
-import com.netcracker.frolic.controller.SubscriptionValidator;
+import com.netcracker.frolic.repository.UserRepo;
+import com.netcracker.frolic.validator.Validator;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-//TODO должен быть отдельный метод для проверки новосозданного экземпляра, проводящий его через
-// creation time check из Validatora.
+
+@Slf4j
 @Transactional
 @Service("jpaSubscriptionService")
 public class SubscriptionServiceImpl implements SubscriptionService {
-    @Autowired private SubscriptionRepo subscriptionRepo;
-    private Logger log = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
+    private final SubscriptionRepo repository;
+    private final Validator<Subscription> validator;
+
+    SubscriptionServiceImpl(SubscriptionRepo repository,
+                            @Qualifier("subscriptionValidator") Validator<Subscription> validator) {
+        this.repository = repository;
+        this.validator = validator;
+    }
 
     @Transactional(readOnly = true)
     public Optional<Subscription> findById(long id)
-    { return subscriptionRepo.findById(id); }
+    { return repository.findById(id); }
 
     public void deleteById(long id)
-    { subscriptionRepo.deleteById(id); }
+    { repository.deleteById(id); }
 
     @Override
     public void cancelSubscription(long id) {
-        subscriptionRepo.findById(id).ifPresent(subscription -> {
+        repository.findById(id).ifPresent(subscription -> {
             subscription.cancel();
             log.debug("Subscription cancelled: {}", subscription);
         });
@@ -37,9 +47,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Transactional(readOnly = true)
     public Page<Subscription> findAllByUserId(long userId, Pageable pageable)
-    { return subscriptionRepo.findAllByUserId(userId, pageable); }
+    { return repository.findAllByUserId(userId, pageable); }
 
     public Subscription save(Subscription sub) {
-        return subscriptionRepo.save(sub);
+        Subscription validSub = validator.validate(sub)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "An attempt to save an invalid subscription: " + validator.getErrorMessage()));
+        return repository.save(validSub);
     }
+
+    @Override
+    public boolean existsById(long id)
+    { return repository.existsById(id); }
 }

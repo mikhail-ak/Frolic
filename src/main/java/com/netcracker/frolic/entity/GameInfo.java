@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.netcracker.frolic.cache.Identifiable;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -20,15 +21,16 @@ import java.util.Set;
  * Геттер для поля id реализован вручную (без использования lombok) для соответствия его
  * реализуемому данным классом интерфейсу Identifiable.
  */
+@Getter
+@Setter
 @Entity
-@Getter @Setter
 @Table(name = "game_info")
 public class GameInfo implements Identifiable<Long> {
     public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private long id;
 
     @Column(nullable = false, unique = true, updatable = false)

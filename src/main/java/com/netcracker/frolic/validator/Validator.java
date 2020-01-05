@@ -1,11 +1,10 @@
-package com.netcracker.frolic.controller;
+package com.netcracker.frolic.validator;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
- * Определив метод validate, можно задать логику проверки произвольных классов.
- * Внутри validate при наличии ошибок необходимо передавать краткие сообщения о них с помощью метода error.
+ * Определив метод check, можно задать логику проверки произвольных классов.
+ * Внутри check при наличии ошибок необходимо передавать краткие сообщения о них с помощью метода error.
  * После хотя бы одного вызова метода error проверяемый экзеипляр класса считается невалидным.
 
  * @param <T> проверяемый класс
@@ -14,10 +13,10 @@ public abstract class Validator<T> {
     private String errorMessage;
     private boolean isValid = true;
 
-    public boolean approves(T classToCheck) {
+    public Optional<T> validate(T classToCheck) {
         errorMessage = "";
-        this.validate(classToCheck);
-        return isValid;
+        this.check(classToCheck);
+        return isValid ? Optional.of(classToCheck) : Optional.empty();
     }
 
     public String getErrorMessage()
@@ -28,5 +27,5 @@ public abstract class Validator<T> {
         isValid = false;
     }
 
-    protected abstract void validate(T classToCheck);
+    protected abstract void check(T classToCheck);
 }

@@ -32,8 +32,8 @@ public class DataJpaConfig {
     public DataSource dataSource() {
         try {
             EmbeddedDatabaseBuilder dbBuilder = new EmbeddedDatabaseBuilder();
-            return dbBuilder.setType(EmbeddedDatabaseType.H2)
-                    .addScripts("classpath:db/schema.sql").build();
+            return dbBuilder.setType(EmbeddedDatabaseType.H2).build();
+            //.addScripts("classpath:db/schema.sql")
         } catch (Exception e) {
             logger.error("Embedded DataSource bean cannot be created!", e);
             return null;

@@ -1,10 +1,17 @@
 package com.netcracker.frolic.config;
 
 import com.netcracker.frolic.Application;
-import com.netcracker.frolic.controller.GameInfoValidator;
+import com.netcracker.frolic.entity.Subscription;
+import com.netcracker.frolic.entity.User;
+import com.netcracker.frolic.repository.GameInfoRepo;
+import com.netcracker.frolic.service.GameInfoService;
+import com.netcracker.frolic.service.GameInfoServiceImpl;
+import com.netcracker.frolic.validator.GameInfoValidator;
 import com.netcracker.frolic.controller.QueryParamResolver;
 import com.netcracker.frolic.controller.QueryParamResolverImpl;
-import com.netcracker.frolic.controller.Validator;
+import com.netcracker.frolic.validator.SubscriptionValidator;
+import com.netcracker.frolic.validator.UserValidator;
+import com.netcracker.frolic.validator.Validator;
 import com.netcracker.frolic.entity.GameInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -42,4 +49,12 @@ public class SpringWebConfig implements WebApplicationInitializer {
     @Bean(name = "gameInfoValidator")
     public Validator<GameInfo> getGameInfoValidator()
     { return new GameInfoValidator(); }
+
+    @Bean(name = "userValidator")
+    public Validator<User> getUserValidator()
+    { return new UserValidator(); }
+
+    @Bean(name = "subscriptionValidator")
+    public Validator<Subscription> getSubscriptionValidator()
+    { return new SubscriptionValidator(); }
 }

@@ -12,4 +12,5 @@ public interface SubscriptionService {
     void cancelSubscription(long id);
     Page<Subscription> findAllByUserId(long userId, Pageable pageable);
     Subscription save(Subscription gameInfo);
+    boolean existsById(long id);
 }

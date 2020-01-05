@@ -2,6 +2,7 @@ package com.netcracker.frolic.entity;
 
 import com.netcracker.frolic.cache.Identifiable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,6 +15,9 @@ import java.time.LocalDateTime;
  * Дата обновления устанавливается автоматически при добавлении/изменении файла.
  * Соответствующие земпляры GameInfo и GameFile имеют одинаковые id.
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "game_file")
 public class GameFile implements Identifiable<Long>, Serializable {
@@ -22,19 +26,14 @@ public class GameFile implements Identifiable<Long>, Serializable {
     private long info_id;
 
     @MapsId
-    @Getter @Setter
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     private GameInfo info;
 
-    @Getter
     @Column(nullable = false, name = "installation_file")
     private Blob installationFile;
 
-    @Getter
     @Column(name="last_updated_on")
     private LocalDateTime lastUpdatedOn;
-
-    public GameFile() { }
 
     public GameFile(Blob installationFile)
     { setInstallationFile(installationFile); }
