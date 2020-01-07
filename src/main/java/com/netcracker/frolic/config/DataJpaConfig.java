@@ -1,11 +1,13 @@
 package com.netcracker.frolic.config;
 
-import com.netcracker.frolic.Application;
+import com.netcracker.frolic.entity.GameInfo;
+import com.netcracker.frolic.entity.Subscription;
+import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.repository.Repository;
+import com.netcracker.frolic.validator.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -74,4 +76,16 @@ public class DataJpaConfig {
         factoryBean.afterPropertiesSet();
         return factoryBean.getNativeEntityManagerFactory();
     }
+
+    @Bean(name = "gameInfoJpaValidator")
+    public ValidatorImpl<GameInfo> getGameInfoJpaValidator()
+    { return new ValidatorImpl<>(GameInfoErrorMessageBuilder.INSTANCE, IllegalArgumentThrower.INSTANCE); }
+
+    @Bean(name = "userJpaValidator")
+    public ValidatorImpl<User> getUserJpaValidator()
+    { return new ValidatorImpl<>(UserErrorMessageBuilder.INSTANCE, IllegalArgumentThrower.INSTANCE); }
+
+    @Bean(name = "subscriptionJpaValidator")
+    public ValidatorImpl<Subscription> getSubscriptionJpaValidator()
+    { return new ValidatorImpl<>(SubscriptionErrorMessageBuilder.INSTANCE, IllegalArgumentThrower.INSTANCE); }
 }

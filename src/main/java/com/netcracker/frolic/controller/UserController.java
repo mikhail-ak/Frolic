@@ -3,6 +3,7 @@ package com.netcracker.frolic.controller;
 import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.service.UserService;
 import com.netcracker.frolic.validator.Validator;
+import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class UserController {
     enum FindBy { EMAIL, ID }
 
     UserController(QueryParamResolver resolver, UserService service,
-                   @Qualifier("userValidator") Validator<User> validator) {
+                   @Qualifier("userWebValidator") Validator<User> validator) {
         this.resolver = resolver;
         this.validator = validator;
         this.service = service;
@@ -30,10 +31,8 @@ public class UserController {
 
     @PostMapping
     public void saveUser(@RequestBody User newUser) {
-        User approvedUser = validator.validate(newUser)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "User is invalid: " + validator.getErrorMessage()));
-        service.save(approvedUser);
+        validator.validate(newUser);
+        service.save(newUser);
     }
 
     @GetMapping
@@ -52,9 +51,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public void changeUser(@RequestBody User patchedUser, @PathVariable Long id) {
         if (!service.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        User validUser = validator.validate(patchedUser)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        validator.getErrorMessage()));
-        service.save(validUser);
+        validator.validate(patchedUser);
+        service.save(patchedUser);
     }
 }

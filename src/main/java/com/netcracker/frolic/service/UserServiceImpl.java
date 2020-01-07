@@ -2,13 +2,11 @@ package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.repository.UserRepo;
-import com.netcracker.frolic.validator.Validator;
+import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -17,9 +15,9 @@ import java.util.Optional;
 @Service("jpaUserService")
 public class UserServiceImpl implements UserService {
     private final UserRepo repository;
-    private final Validator<User> validator;
+    private final ValidatorImpl<User> validator;
 
-    UserServiceImpl(UserRepo repository, @Qualifier("userValidator") Validator<User> validator) {
+    UserServiceImpl(UserRepo repository, @Qualifier("userJpaValidator") ValidatorImpl<User> validator) {
         this.repository = repository;
         this.validator = validator;
     }
@@ -45,10 +43,8 @@ public class UserServiceImpl implements UserService {
     { return repository.findByEmail(email); }
 
     public User save(User user) {
-        User validUser = validator.validate(user)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "An attempt to save an invalid user: " + validator.getErrorMessage()));
-        return repository.save(validUser);
+        validator.validate(user);
+        return repository.save(user);
     }
 
     @Override

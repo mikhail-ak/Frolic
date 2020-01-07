@@ -1,14 +1,9 @@
 package com.netcracker.frolic.service;
 
 import com.netcracker.frolic.entity.Subscription;
-import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.repository.SubscriptionRepo;
-import com.netcracker.frolic.repository.UserRepo;
-import com.netcracker.frolic.validator.Validator;
+import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +17,10 @@ import java.util.Optional;
 @Service("jpaSubscriptionService")
 public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepo repository;
-    private final Validator<Subscription> validator;
+    private final ValidatorImpl<Subscription> validator;
 
     SubscriptionServiceImpl(SubscriptionRepo repository,
-                            @Qualifier("subscriptionValidator") Validator<Subscription> validator) {
+                            @Qualifier("subscriptionJpaValidator") ValidatorImpl<Subscription> validator) {
         this.repository = repository;
         this.validator = validator;
     }
@@ -50,10 +45,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     { return repository.findAllByUserId(userId, pageable); }
 
     public Subscription save(Subscription sub) {
-        Subscription validSub = validator.validate(sub)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "An attempt to save an invalid subscription: " + validator.getErrorMessage()));
-        return repository.save(validSub);
+        validator.validate(sub);
+        return repository.save(sub);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.netcracker.frolic.controller;
 
 import com.netcracker.frolic.entity.Subscription;
-import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.service.SubscriptionService;
 import com.netcracker.frolic.validator.Validator;
+import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -11,8 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -25,7 +23,7 @@ public class SubscriptionController {
     enum FindBy { USER_ID }
 
     SubscriptionController(QueryParamResolver resolver, SubscriptionService service,
-                   @Qualifier("subscriptionValidator") Validator<Subscription> validator) {
+                   @Qualifier("subscriptionWebValidator") Validator<Subscription> validator) {
         this.resolver = resolver;
         this.validator = validator;
         this.service = service;
@@ -33,10 +31,8 @@ public class SubscriptionController {
 
     @PostMapping
     public void subscribe(@RequestBody Subscription newSubscription) {
-        Subscription validSubscription = validator.validate(newSubscription)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        validator.getErrorMessage()));
-        service.save(validSubscription);
+        validator.validate(newSubscription);
+        service.save(newSubscription);
     }
 
     @GetMapping
@@ -54,8 +50,7 @@ public class SubscriptionController {
 
     @PatchMapping
     public void  patch(@RequestBody Subscription patchedSubscription) {
-        Subscription validSub = validator.validate(patchedSubscription)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, validator.getErrorMessage()));
-        service.save(validSub);
+        validator.validate(patchedSubscription);
+        service.save(patchedSubscription);
     }
 }

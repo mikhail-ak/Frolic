@@ -1,18 +1,12 @@
 package com.netcracker.frolic.config;
 
 import com.netcracker.frolic.Application;
-import com.netcracker.frolic.entity.Subscription;
-import com.netcracker.frolic.entity.User;
-import com.netcracker.frolic.repository.GameInfoRepo;
-import com.netcracker.frolic.service.GameInfoService;
-import com.netcracker.frolic.service.GameInfoServiceImpl;
-import com.netcracker.frolic.validator.GameInfoValidator;
 import com.netcracker.frolic.controller.QueryParamResolver;
 import com.netcracker.frolic.controller.QueryParamResolverImpl;
-import com.netcracker.frolic.validator.SubscriptionValidator;
-import com.netcracker.frolic.validator.UserValidator;
-import com.netcracker.frolic.validator.Validator;
 import com.netcracker.frolic.entity.GameInfo;
+import com.netcracker.frolic.entity.Subscription;
+import com.netcracker.frolic.entity.User;
+import com.netcracker.frolic.validator.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -46,15 +40,15 @@ public class SpringWebConfig implements WebApplicationInitializer {
     public QueryParamResolver getDefaultQueryParamResolver()
     { return new QueryParamResolverImpl(); }
 
-    @Bean(name = "gameInfoValidator")
-    public Validator<GameInfo> getGameInfoValidator()
-    { return new GameInfoValidator(); }
+    @Bean(name = "gameInfoWebValidator")
+    public ValidatorImpl<GameInfo> getGameInfoWebValidator()
+    { return new ValidatorImpl<>(GameInfoErrorMessageBuilder.INSTANCE, ResponseStatusThrower.BAD_REQUEST); }
 
-    @Bean(name = "userValidator")
-    public Validator<User> getUserValidator()
-    { return new UserValidator(); }
+    @Bean(name = "userWebValidator")
+    public ValidatorImpl<User> getUserWebValidator()
+    { return new ValidatorImpl<>(UserErrorMessageBuilder.INSTANCE, ResponseStatusThrower.BAD_REQUEST); }
 
-    @Bean(name = "subscriptionValidator")
-    public Validator<Subscription> getSubscriptionValidator()
-    { return new SubscriptionValidator(); }
+    @Bean(name = "subscriptionWebValidator")
+    public ValidatorImpl<Subscription> getSubscriptionWebValidator()
+    { return new ValidatorImpl<>(SubscriptionErrorMessageBuilder.INSTANCE, ResponseStatusThrower.BAD_REQUEST); }
 }

@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.netcracker.frolic.entity.GameInfo;
 import com.netcracker.frolic.service.GameInfoService;
 import com.netcracker.frolic.validator.Validator;
+import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
@@ -36,7 +37,7 @@ class GameInfoController {
     enum FindBy { GENRE, TITLE }
 
     GameInfoController(Environment environment, GameInfoService service, QueryParamResolver resolver,
-                       @Qualifier("gameInfoValidator") Validator<GameInfo> validator) {
+                       @Qualifier("gameInfoWebValidator") Validator<GameInfo> validator) {
         String itemsPerPageString = environment.getProperty("itemsPerPage");
         ITEMS_PER_PAGE = (itemsPerPageString == null) ? DEFAULT_ITEMS_PER_PAGE
                 : Integer.parseInt(itemsPerPageString);
@@ -77,10 +78,8 @@ class GameInfoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "IDs in HTTP request and in JSON do not match");
 
-        GameInfo validInfo = validator.validate(infoFromJson)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "An attempt to save an invalid GameInfo: " + validator.getErrorMessage()));
-        service.save(validInfo);
+        validator.validate(infoFromJson);
+        service.save(infoFromJson);
     }
 
     @GetMapping(value = "/{id}")
