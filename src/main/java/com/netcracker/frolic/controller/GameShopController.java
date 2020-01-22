@@ -25,7 +25,7 @@ import static com.netcracker.frolic.entity.GameInfo.Genre;
 @RestController
 @PropertySource("classpath:web.properties")
 @RequestMapping(value = "/game-info", produces = "application/json")
-class GameInfoController {
+class GameShopController {
     final int DEFAULT_ITEMS_PER_PAGE = 10;
     final int ITEMS_PER_PAGE;
 
@@ -36,7 +36,7 @@ class GameInfoController {
     enum SortBy { RATING, RELEASE_DATE }
     enum FindBy { GENRE, TITLE }
 
-    GameInfoController(Environment environment, GameInfoService service, QueryParamResolver resolver,
+    GameShopController(Environment environment, GameInfoService service, QueryParamResolver resolver,
                        @Qualifier("gameInfoWebValidator") Validator<GameInfo> validator) {
         String itemsPerPageString = environment.getProperty("itemsPerPage");
         ITEMS_PER_PAGE = (itemsPerPageString == null) ? DEFAULT_ITEMS_PER_PAGE

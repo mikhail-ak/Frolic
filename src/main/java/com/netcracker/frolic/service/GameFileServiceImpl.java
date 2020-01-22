@@ -38,8 +38,8 @@ public class GameFileServiceImpl implements GameFileService {
         cache.remove(id);
     }
 
-    public GameFile save(GameFile gameInfo)
-    { return gameFileRepo.save(gameInfo); }
+    public GameFile save(GameFile gameFile)
+    { return gameFileRepo.save(gameFile); }
 
     @PostConstruct private void initCache()
     { cache = cacheIsOn ? new LRUCache<>(cacheCapacity)
