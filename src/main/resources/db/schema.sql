@@ -1,7 +1,6 @@
 create table game_info (
     id bigint primary key,
-    description varchar(255),
-    logo blob,
+    description varchar(1023),
     price_per_day decimal(19,2) not null,
     ratings_count int not null,
     ratings_sum int not null,
@@ -14,6 +13,14 @@ create table game_file (
     installation_file blob not null,
     last_updated_on timestamp,
     info_id bigint primary key,
+    foreign key (info_id) references game_info(id)
+);
+
+create table picture (
+    picture blob not null;
+    mime_type varchar(63) not null;
+    description varchar(255);
+    picture_id bigint primary key;
     foreign key (info_id) references game_info(id)
 );
 

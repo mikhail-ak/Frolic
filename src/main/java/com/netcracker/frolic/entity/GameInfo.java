@@ -6,12 +6,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.netcracker.frolic.cache.Identifiable;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,9 +52,12 @@ public class GameInfo implements Identifiable<Long> {
 
     @Embedded Rating rating;
 
+    @Column(columnDefinition = "varchar(1023)")
     private String description;
 
-    private Blob logo;
+    @OneToOne(mappedBy = "info", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private GamePic logo;
 
     @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "release_date")

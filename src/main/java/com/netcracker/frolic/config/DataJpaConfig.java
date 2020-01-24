@@ -62,7 +62,7 @@ public class DataJpaConfig {
         hibernateProp.put("hibernate.max_fetch_depth", 3);
         hibernateProp.put("hibernate.jdbc.batch_size", 10);
         hibernateProp.put("hibernate.jdbc.fetch_size", 50);
-        hibernateProp.put("hibernate.hbm2ddl.auto", "create");
+        hibernateProp.put("hibernate.hbm2ddl.auto", "update");
         return hibernateProp;
     }
 
