@@ -26,7 +26,6 @@ import java.util.Set;
 public class GameInfo implements Identifiable<Long> {
     public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

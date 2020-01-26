@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Transactional
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class GameInfoServiceImpl implements GameInfoService {
     private final GameInfoRepo repository;
     private final ValidatorImpl<GameInfo> validator;
+    private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     GameInfoServiceImpl(GameInfoRepo repository,
                         @Qualifier("gameInfoJpaValidator") ValidatorImpl<GameInfo> validator) {
