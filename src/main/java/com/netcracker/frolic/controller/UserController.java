@@ -3,13 +3,15 @@ package com.netcracker.frolic.controller;
 import com.netcracker.frolic.entity.User;
 import com.netcracker.frolic.service.UserService;
 import com.netcracker.frolic.validator.Validator;
-import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Base64;
 import java.util.Optional;
 
 @Slf4j
@@ -27,6 +29,19 @@ public class UserController {
         this.resolver = resolver;
         this.validator = validator;
         this.service = service;
+    }
+
+    @RequestMapping("/login")
+    public boolean login(@RequestBody User user) {
+        return user.getName().equals("user") && user.getPassword().equals("password");
+    }
+
+    @RequestMapping("/info")
+    public Principal user(HttpServletRequest request) {
+        String authToken = request.getHeader("Authorization")
+                .substring("Basic".length()).trim();
+        return () ->  new String(Base64.getDecoder()
+                .decode(authToken)).split(":")[0];
     }
 
     @PostMapping

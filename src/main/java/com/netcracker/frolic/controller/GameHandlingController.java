@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/game-resources", produces = "application/json")
+@RequestMapping(value = "/game-handle", produces = "application/json")
 public class GameHandlingController {
     private final GameFileService fileService;
     private final GameInfoService infoService;
@@ -41,12 +41,6 @@ public class GameHandlingController {
         this.validator = validator;
         this.picService = picService;
         this.resolver = resolver;
-    }
-
-    @GetMapping(value = "/{id}")
-    public GameFile getFile(@PathVariable Long id) {
-        return fileService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
@@ -78,5 +72,29 @@ public class GameHandlingController {
         fileService.save(gameFile);
         picService.save(gamePic);
         infoService.save(gameInfo);
+    }
+
+    @GetMapping(value = "/{id}")
+    public GameInfo findGameInfoById(@PathVariable Long id) {
+        return infoService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PatchMapping(value = "/{id}")
+    public void patchGameInfo(@PathVariable Long id,
+                              @RequestBody GameInfo infoFromJson) {
+        if(!infoService.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        GameInfo infoFromRepository = findGameInfoById(id);
+        if (!infoFromRepository.getId().equals(infoFromJson.getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "IDs in HTTP request and in JSON do not match");
+
+        validator.validate(infoFromJson);
+        infoService.save(infoFromJson);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void removeGame(@PathVariable Long id) {
+        infoService.deleteById(id);
     }
 }
