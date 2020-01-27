@@ -1,6 +1,5 @@
 package com.netcracker.frolic.entity;
 
-import com.netcracker.frolic.cache.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "game_file")
-public class GameFile implements Identifiable<Long>, Serializable {
+public class GameFile {
 
     @Id
     private long info_id;
@@ -42,9 +41,6 @@ public class GameFile implements Identifiable<Long>, Serializable {
         this.installationFile = installationFile;
         this.lastUpdatedOn = LocalDateTime.now();
     }
-
-    @Override public Long getId()
-    { return this.info_id; }
 
     @Override public String toString()
     { return "Installation file of the " + info.getTitle() + " game. Last updated on " + lastUpdatedOn; }

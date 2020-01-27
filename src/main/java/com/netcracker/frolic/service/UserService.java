@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> findById(long id);
-    void updateUser(long userId, User.AccountStatus status, String password, String email);
     Optional<User> findByEmail(String email);
+    Optional<User> findByName(String name);
     User save(User gameInfo);
     boolean existsById(long id);
 }

@@ -14,7 +14,6 @@ public class GamePicServiceImpl implements GamePicService {
     @Autowired
     private GamePicRepo gamePicRepo;
 
-
     @Transactional(readOnly = true)
     public Optional<GamePic> findById(long id) {
         return gamePicRepo.findById(id);

@@ -42,9 +42,8 @@ public class GamePic {
     }
 
     @JsonValue
-    String picToBase64() throws SQLException {
-        return "data:" + this.mimeType + ";base64," + Base64Utils.encodeToString(picture);
-    }
+    String picToBase64() throws SQLException
+    { return "data:" + this.mimeType + ";base64," + Base64Utils.encodeToString(picture); }
 
     @Override
     public String toString() {

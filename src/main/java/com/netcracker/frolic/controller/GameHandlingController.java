@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/game-handle", produces = "application/json")
 public class GameHandlingController {
     private final GameFileService fileService;
@@ -51,7 +52,6 @@ public class GameHandlingController {
         String base64logo = StringUtils.substringAfter(base64logoWithType, ",");
         byte[] logo = Base64Utils.decodeFromString(base64logo);
         GamePic gamePic = new GamePic(logo, logoName, logoMimeType);
-        //log.warn(gamePic.toString());
 
         String base64file = StringUtils.substringAfter(gameInfoMap.get("file"), ",");
         Blob file = BlobProxy.generateProxy(Base64Utils.decodeFromString(base64file));
@@ -80,18 +80,19 @@ public class GameHandlingController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PatchMapping(value = "/{id}")
-    public void patchGameInfo(@PathVariable Long id,
-                              @RequestBody GameInfo infoFromJson) {
+    /*
+    @PatchMapping
+    public void patchGameInfo(@RequestBody GameInfo infoFromJson) {
         if(!infoService.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         GameInfo infoFromRepository = findGameInfoById(id);
-        if (!infoFromRepository.getId().equals(infoFromJson.getId()))
+        if (!infoFromRepository.getId() equals(infoFromJson.getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "IDs in HTTP request and in JSON do not match");
 
         validator.validate(infoFromJson);
         infoService.save(infoFromJson);
     }
+     */
 
     @DeleteMapping(value = "/{id}")
     public void removeGame(@PathVariable Long id) {

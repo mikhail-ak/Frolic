@@ -3,7 +3,6 @@ package com.netcracker.frolic.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.netcracker.frolic.cache.Identifiable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "game_info")
-public class GameInfo implements Identifiable<Long> {
+public class GameInfo {
     public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
 
     @Id
@@ -61,9 +60,6 @@ public class GameInfo implements Identifiable<Long> {
     @JsonSerialize(using = ToStringSerializer.class)
     @Column(name = "release_date")
     private LocalDate releaseDate;
-
-    @Override public Long getId()
-    { return this.id; }
 
     @Override public boolean equals(Object other) {
         if (this == other) return true;

@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import com.netcracker.frolic.entity.GameFile;
 import com.netcracker.frolic.entity.GameInfo;
 import com.netcracker.frolic.entity.GamePic;
+import com.netcracker.frolic.entity.User;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ public class DbInit {
     private final GameFileService fileService;
     private final GameInfoService infoService;
     private final GamePicService picService;
+    private final UserService userService;
 
     /*
     Поставить в соответствие полному названию игры простое название. Полное название может содержать
@@ -27,10 +29,12 @@ public class DbInit {
      */
     public final Map<String, String> GAME_TITLE_TO_RESOURCE_FILE_NAME;
 
-    DbInit(GameFileService fileService, GameInfoService infoService, GamePicService picService) {
+    DbInit(GameFileService fileService, GameInfoService infoService,
+           GamePicService picService, UserService userService) {
         this.fileService = fileService;
         this.infoService = infoService;
         this.picService = picService;
+        this.userService = userService;
 
         Map<String, String> proxy = new HashMap<>();
         proxy.put("Call of Duty: Mobile", "COD");
@@ -50,8 +54,16 @@ public class DbInit {
     }
 
     @PostConstruct
-    public void initDb() throws IOException {
-        GAME_TITLE_TO_RESOURCE_FILE_NAME.entrySet().forEach(this::getGameFromFilesAndPutItInDB);
+    public void initDb() {
+        GAME_TITLE_TO_RESOURCE_FILE_NAME.entrySet()
+                .forEach(this::getGameFromFilesAndPutItInDB);
+
+        User admin = new User();
+        admin.setName("FBombChampion");
+        admin.setEmail("example@gamil.com");
+        admin.setPassword("Ab123456");
+        admin.setRoles(Arrays.asList("ROLE_ADMIN"));
+        userService.save(admin);
     }
 
     private void getGameFromFilesAndPutItInDB(Map.Entry<String, String> titleAndFileName) {

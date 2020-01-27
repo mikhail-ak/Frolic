@@ -22,7 +22,7 @@ import static com.netcracker.frolic.entity.GameInfo.Genre;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/game-info", produces = "application/json")
+@RequestMapping(value = "/game-shop", produces = "application/json")
 class GameShopController {
 
     private final GameInfoService infoService;
@@ -35,7 +35,6 @@ class GameShopController {
 
     GameShopController(Environment environment, GameInfoService infoService, GameFileService fileService,
                        QueryParamResolver resolver, @Qualifier("gameInfoWebValidator") Validator<GameInfo> validator) {
-        String itemsPerPageString = environment.getProperty("itemsPerPage");
         this.infoService = infoService;
         this.fileService = fileService;
         this.resolver = resolver;

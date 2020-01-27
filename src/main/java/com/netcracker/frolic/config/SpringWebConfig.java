@@ -24,8 +24,8 @@ import javax.servlet.ServletRegistration;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = Application.class)
-@PropertySource("classpath:cache.properties")
 public class SpringWebConfig implements WebApplicationInitializer {
+
     private final String TMP_FOLDER = "/tmp";
     private final int MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
 
@@ -34,11 +34,6 @@ public class SpringWebConfig implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(SpringWebConfig.class, DataJpaConfig.class);
         context.setServletContext(servletContext);
-
-        //ServletRegistration.Dynamic dispatcher =
-        //       servletContext.addServlet("dispatcher", new DispatcherServlet(context));
-        //dispatcher.setLoadOnStartup(1);
-        //dispatcher.addMapping("/");
 
         ServletRegistration.Dynamic dispatcher =
                 servletContext.addServlet("dispatcher", new DispatcherServlet(context));

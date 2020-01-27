@@ -26,21 +26,13 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findById(long id)
     { return repository.findById(id); }
 
-    public void updateUser(long userId, User.AccountStatus status, String password, String email) {
-        repository.findById(userId).ifPresent(user -> {
-            if (user.getAccountStatus() == User.AccountStatus.ADMIN) {
-                log.warn("An attempt to change admin's account has been made");
-            } else {
-                user.setAccountStatus(status);
-                user.setPassword(password);
-                user.setEmail(email);
-            }
-        });
-    }
-
     @Transactional(readOnly = true)
     public Optional<User> findByEmail(String email)
     { return repository.findByEmail(email); }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByName(String name)
+    { return repository.findByName(name); }
 
     public User save(User user) {
         validator.validate(user);
