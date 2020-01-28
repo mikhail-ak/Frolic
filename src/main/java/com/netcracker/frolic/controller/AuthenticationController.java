@@ -35,7 +35,7 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/signin")
     public Map<String, String> signin(@RequestBody HashMap<String, String> data) {
         try {
             String username = data.get("username");
