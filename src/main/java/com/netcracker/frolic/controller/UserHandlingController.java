@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,22 +50,24 @@ public class UserHandlingController {
         service.save(newUser);
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public Map<String, String> signin(@RequestBody HashMap<String, String> data) {
+        String username = data.get("username");
+        String password = data.get("password");
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(username, password);
+        List<String> userRoles = userService.loadUserByUsername(username).getRoles();
         try {
-            String username = data.get("username");
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.get("password")));
-            String token = tokenUtil.createToken(username, userService.findByName(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found"))
-                    .getRoles());
-
-            Map<String, String> response = new HashMap<>();
-            response.put("username", username);
-            response.put("token", token);
-            return response;
+            authenticationManager.authenticate(authToken);
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username/password supplied");
         }
+        String jsonWebToken = tokenUtil.createToken(username, userService.loadUserByUsername(username).getRoles());
+        Map<String, String> response = new HashMap<>();
+        response.put("username", username);
+        response.put("token", jsonWebToken);
+        response.put("role", userRoles.get(0).substring(5).toLowerCase());
+        return response;
     }
 
     @GetMapping

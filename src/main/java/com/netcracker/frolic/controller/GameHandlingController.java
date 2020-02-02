@@ -13,18 +13,21 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashMap;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/game-handle", produces = "application/json")
 public class GameHandlingController {
     private final GameFileService fileService;
@@ -54,8 +57,7 @@ public class GameHandlingController {
         GamePic gamePic = new GamePic(logo, logoName, logoMimeType);
 
         String base64file = StringUtils.substringAfter(gameInfoMap.get("file"), ",");
-        Blob file = BlobProxy.generateProxy(Base64Utils.decodeFromString(base64file));
-        GameFile gameFile = new GameFile(file);
+        GameFile gameFile = new GameFile(Base64Utils.decodeFromString(base64file));
 
         GameInfo gameInfo = new GameInfo();
         gameInfo.setTitle(gameInfoMap.get("title"));
@@ -72,12 +74,6 @@ public class GameHandlingController {
         fileService.save(gameFile);
         picService.save(gamePic);
         infoService.save(gameInfo);
-    }
-
-    @GetMapping(value = "/{id}")
-    public GameInfo findGameInfoById(@PathVariable Long id) {
-        return infoService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     /*

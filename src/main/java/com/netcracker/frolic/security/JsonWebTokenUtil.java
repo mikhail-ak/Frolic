@@ -50,8 +50,7 @@ public class JsonWebTokenUtil {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userService.findByName(getUsername(token))
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserDetails userDetails = userService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

@@ -5,6 +5,8 @@ import com.netcracker.frolic.repository.UserRepo;
 import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +33,14 @@ public class UserServiceImpl implements UserService {
     { return repository.findByEmail(email); }
 
     @Transactional(readOnly = true)
-    public Optional<User> findByName(String name)
-    { return repository.findByName(name); }
+    public User loadUserByUsername(String name) {
+        User user = repository.findByName(name);
+        if (user == null) {
+            throw new UsernameNotFoundException(UserRepo.class.getSimpleName()
+                    + " failed to find user with name " + name + " in the database.");
+        }
+        return repository.findByName(name);
+    }
 
     public User save(User user) {
         validator.validate(user);

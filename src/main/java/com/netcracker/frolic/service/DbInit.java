@@ -8,6 +8,7 @@ import com.netcracker.frolic.entity.User;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +23,7 @@ public class DbInit {
     private final GameInfoService infoService;
     private final GamePicService picService;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     /*
     Поставить в соответствие полному названию игры простое название. Полное название может содержать
@@ -29,12 +31,13 @@ public class DbInit {
      */
     public final Map<String, String> GAME_TITLE_TO_RESOURCE_FILE_NAME;
 
-    DbInit(GameFileService fileService, GameInfoService infoService,
-           GamePicService picService, UserService userService) {
+    DbInit(GameFileService fileService, GameInfoService infoService, GamePicService picService,
+           UserService userService, PasswordEncoder passwordEncoder) {
         this.fileService = fileService;
         this.infoService = infoService;
         this.picService = picService;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
 
         Map<String, String> proxy = new HashMap<>();
         proxy.put("Call of Duty: Mobile", "COD");
@@ -61,9 +64,23 @@ public class DbInit {
         User admin = new User();
         admin.setName("FBombChampion");
         admin.setEmail("example@gamil.com");
-        admin.setPassword("Ab123456");
+        admin.setPassword(passwordEncoder.encode("Ab123456"));
         admin.setRoles(Arrays.asList("ROLE_ADMIN"));
         userService.save(admin);
+
+        User employee = new User();
+        employee.setName("CptButtPirate");
+        employee.setEmail("ample@gamil.com");
+        employee.setPassword(passwordEncoder.encode("Ab123456"));
+        employee.setRoles(Arrays.asList("ROLE_EMPLOYEE"));
+        userService.save(employee);
+
+        User client = new User();
+        client.setName("BigNickDigger");
+        client.setEmail("ple@gamil.com");
+        client.setPassword(passwordEncoder.encode("Ab123456"));
+        client.setRoles(Arrays.asList("ROLE_CLIENT"));
+        userService.save(client);
     }
 
     private void getGameFromFilesAndPutItInDB(Map.Entry<String, String> titleAndFileName) {
@@ -80,15 +97,14 @@ public class DbInit {
         String logoName = "Logo for " + title;
         GamePic gamePic = new GamePic(logoBytes, logoName, logoMimeType);
 
-        Resource file = new ClassPathResource("files/" + resourceName + ".apk");
+        Resource file = new ClassPathResource("files/" + resourceName + ".zip");
         byte[] fileBytes;
         try {
             fileBytes = ByteStreams.toByteArray(file.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Blob fileBlob = BlobProxy.generateProxy(fileBytes);
-        GameFile gameFile = new GameFile(fileBlob);
+        GameFile gameFile = new GameFile(fileBytes);
 
         Resource description = new ClassPathResource("text/" + resourceName + ".txt");
         String stringDescription = GameInfoService.asString(description);

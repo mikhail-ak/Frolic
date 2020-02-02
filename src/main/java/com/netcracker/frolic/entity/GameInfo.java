@@ -1,6 +1,7 @@
 package com.netcracker.frolic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AccessLevel;
@@ -23,7 +24,11 @@ import java.util.Set;
 @Entity
 @Table(name = "game_info")
 public class GameInfo {
-    public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING }
+    public enum Genre { FIRST_PERSON_SHOOTER, ROLE_PLAYING, STRATEGY, QUEST, FIGHTING;
+        @JsonValue
+        public String getName()
+        { return String.join(" ", this.name().split("_")); }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

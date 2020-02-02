@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "subscription")
 public class Subscription {
-    enum SubStatus { ACTIVE, EXPIRED, CANCELLED }
+    public enum Status { ON_HOLD, ACTIVE, EXPIRED, CANCELLED }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,38 +37,42 @@ public class Subscription {
     private GameInfo info;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SubStatus status;
+    @Enumerated(EnumType.ORDINAL)
+    private Status status;
 
     @Column(nullable = false, name = "activation_time")
-    private LocalDateTime activationTime;
+    private LocalDate activationTime;
 
     @Column(nullable = false, name = "expiration_time")
-    private LocalDateTime expirationTime;
+    private LocalDate expirationTime;
 
     @Column(nullable = false, name = "creation_time")
-    private LocalDateTime creationTime;
+    private LocalDate creationTime;
 
-    Subscription(LocalDateTime begin, LocalDateTime end) {
+    public Subscription(User whooo, GameInfo what, LocalDate begin, LocalDate end) {
         activationTime = begin;
         expirationTime = end;
-        creationTime = LocalDateTime.now();
+        creationTime = LocalDate.now();
         if (end.isBefore(creationTime))
             throw new IllegalArgumentException("activity period is fully in the past");
         if (begin.isBefore(creationTime))
             throw new IllegalArgumentException("activity period is partially in the past");
+        this.user = whooo;
+        this.info = what;
+        status = (begin.isAfter(creationTime)) ? Status.ON_HOLD : Status.ACTIVE;
     }
 
-    public SubStatus getStatus() {
-        LocalDateTime now = LocalDateTime.now();
-        status = (status == SubStatus.CANCELLED) ? SubStatus.CANCELLED
-                : (now.isBefore(expirationTime)) ? SubStatus.ACTIVE
-                : SubStatus.EXPIRED;
+    public Status determineStatus() {
+        LocalDate now = LocalDate.now();
+        status = (status == Status.CANCELLED) ? Status.CANCELLED
+                : (now.isBefore(activationTime)) ? Status.ON_HOLD
+                : (now.isBefore(expirationTime)) ? Status.ACTIVE
+                : Status.EXPIRED;
         return status;
     }
 
     public void cancel()
-    { this.status = SubStatus.CANCELLED; }
+    { this.status = Status.CANCELLED; }
 
     @Override public String toString()
     { return "subscription id: " + id; }

@@ -14,7 +14,6 @@ public enum  UserErrorMessageBuilder implements Function<User, String> { INSTANC
         if (user.getName().length() < 4) errorMessage.add("user name is too short");
         if (user.getName().length() > 31) errorMessage.add("user name is too long");
         if (user.getPassword().length() < 8) errorMessage.add("user password is too short");
-        if (user.getPassword().length() > 31) errorMessage.add("user password is too long");
         return StringUtils.join(errorMessage, ", ");
     }
 }

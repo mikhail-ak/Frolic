@@ -1,12 +1,15 @@
 package com.netcracker.frolic.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.Base64Utils;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 /**
@@ -28,16 +31,20 @@ public class GameFile {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     private GameInfo info;
 
-    @Column(nullable = false, name = "installation_file")
-    private Blob installationFile;
+    @Lob
+    private byte[] installationFile;
 
     @Column(name="last_updated_on")
     private LocalDateTime lastUpdatedOn;
 
-    public GameFile(Blob installationFile)
+    public GameFile(byte[] installationFile)
     { setInstallationFile(installationFile); }
 
-    public void setInstallationFile(Blob installationFile) {
+    @JsonValue
+    String fileToBase64()
+    { return "data:" + "application/zip" + ";base64," + Base64Utils.encodeToString(installationFile); }
+
+    public void setInstallationFile(byte[] installationFile) {
         this.installationFile = installationFile;
         this.lastUpdatedOn = LocalDateTime.now();
     }
