@@ -21,7 +21,9 @@ public interface SubscriptionService {
         subDetails.put("creationTime", sub.getCreationTime().toString());
         subDetails.put("activationTime", sub.getActivationTime().toString());
         subDetails.put("expirationTime", sub.getExpirationTime().toString());
-        subDetails.put("status", sub.getStatus().toString());
+        subDetails.put("status", sub.getStatus().getName());
+        subDetails.put("gameTitle", sub.getInfo().getTitle());
+        subDetails.put("subId", Long.toString(sub.getId()));
         return  subDetails;
     }
 }

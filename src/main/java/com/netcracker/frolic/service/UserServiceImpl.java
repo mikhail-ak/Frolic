@@ -5,6 +5,8 @@ import com.netcracker.frolic.repository.UserRepo;
 import com.netcracker.frolic.validator.ValidatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,11 @@ public class UserServiceImpl implements UserService {
         validator.validate(user);
         return repository.save(user);
     }
+
+    @Override
+    public Page<User> findAll(Pageable pageable)
+    { return repository.findAll(pageable); }
+
 
     @Override
     public boolean existsById(long id)

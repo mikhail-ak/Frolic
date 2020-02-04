@@ -1,5 +1,6 @@
 package com.netcracker.frolic.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "subscription")
 public class Subscription {
-    public enum Status { ON_HOLD, ACTIVE, EXPIRED, CANCELLED }
+    public enum Status { ON_HOLD, ACTIVE, EXPIRED, CANCELLED;
+        @JsonValue
+        public String getName()
+        { return String.join(" ", this.name().split("_")); }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -84,8 +84,8 @@ public class SubscriptionController {
 
         Resource mailMessage = new ClassPathResource("text/MailMessage.txt");
         String stringMessage = GameInfoService.asString(mailMessage);
-        stringMessage.replace("[game_title]", gameInfo.getTitle());
-        stringMessage.replace("[code]", Integer.toString(gameInfo.hashCode()));
+        stringMessage = stringMessage.replace("[game_title]", gameInfo.getTitle());
+        stringMessage = stringMessage.replace("[code]", Integer.toString(gameInfo.hashCode()));
         emailService.sendMail("kotedov299@hiwave.org", "Successful subscription", stringMessage);
     }
 
@@ -102,10 +102,20 @@ public class SubscriptionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "No user with that name is found in the database");
         }
-        Page<Map<String, String>> subs = subscriptionService.findAllByUserId(subscriber.getId(), pageRequest)
+        Page<Map<String, String>> subs =
+                subscriptionService.findAllByUserId(subscriber.getId(), pageRequest)
                 .map(SubscriptionService::subToStringMap);
         return subs;
     }
+
+    @DeleteMapping("/{id}")
+    public void cancelById(@PathVariable Long id) {
+        Subscription sub = subscriptionService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        sub.cancel();
+        subscriptionService.save(sub);
+    }
+
 
     @PatchMapping
     public void  patch(@RequestBody Subscription patchedSubscription) {

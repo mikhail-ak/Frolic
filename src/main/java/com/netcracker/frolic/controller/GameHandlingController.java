@@ -4,6 +4,7 @@ import com.netcracker.frolic.entity.GameFile;
 import com.netcracker.frolic.entity.GameInfo;
 import com.netcracker.frolic.entity.GamePic;
 import com.netcracker.frolic.entity.Rating;
+import com.netcracker.frolic.service.EmailService;
 import com.netcracker.frolic.service.GameFileService;
 import com.netcracker.frolic.service.GameInfoService;
 import com.netcracker.frolic.service.GamePicService;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.Blob;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 
 @Slf4j
@@ -35,20 +40,24 @@ public class GameHandlingController {
     private final GamePicService picService;
     private final Validator<GameInfo> validator;
     private final QueryParamResolver resolver;
+    private final EmailService emailService;
+
 
 
     GameHandlingController(GameFileService fileService, GameInfoService infoService, GamePicService picService,
-                           QueryParamResolver resolver,
+                           QueryParamResolver resolver, EmailService emailService,
                            @Qualifier("gameInfoWebValidator") Validator<GameInfo> validator) {
         this.fileService = fileService;
         this.infoService = infoService;
         this.validator = validator;
         this.picService = picService;
         this.resolver = resolver;
+        this.emailService = emailService;
     }
 
     @PostMapping
     public void postGame(@RequestBody HashMap<String, String> gameInfoMap) {
+        log.warn(gameInfoMap.get("releaseDateF"));
         String base64logoWithType = gameInfoMap.get("logo");
         String logoMimeType = StringUtils.substringBetween(base64logoWithType, ":", ";");
         String logoName = "Logo for " + gameInfoMap.get("title");
@@ -58,6 +67,10 @@ public class GameHandlingController {
 
         String base64file = StringUtils.substringAfter(gameInfoMap.get("file"), ",");
         GameFile gameFile = new GameFile(Base64Utils.decodeFromString(base64file));
+        LocalDate releaseDate = Instant.ofEpochMilli(
+                Long.parseLong(gameInfoMap.get("releaseDateF")))
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
 
         GameInfo gameInfo = new GameInfo();
         gameInfo.setTitle(gameInfoMap.get("title"));
@@ -67,31 +80,32 @@ public class GameHandlingController {
         gameInfo.setGenre(resolver.resolve(GameInfo.Genre.class, gameInfoMap.get("genre")));
         gameInfo.setRating(new Rating(0, 1));
         gameInfo.setDescription(gameInfoMap.get("description"));
-        gameInfo.setReleaseDate(LocalDate.parse(gameInfoMap.get("date")));
+        gameInfo.setReleaseDate(releaseDate);
 
         gameFile.setInfo(gameInfo);
         gamePic.setInfo(gameInfo);
         fileService.save(gameFile);
         picService.save(gamePic);
+
+        validator.validate(gameInfo);
         infoService.save(gameInfo);
     }
 
-    /*
-    @PatchMapping
-    public void patchGameInfo(@RequestBody GameInfo infoFromJson) {
-        if(!infoService.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        GameInfo infoFromRepository = findGameInfoById(id);
-        if (!infoFromRepository.getId() equals(infoFromJson.getId()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "IDs in HTTP request and in JSON do not match");
-
-        validator.validate(infoFromJson);
-        infoService.save(infoFromJson);
-    }
-     */
-
     @DeleteMapping(value = "/{id}")
     public void removeGame(@PathVariable Long id) {
+        GameInfo gameInfo = infoService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Resource mailMessage = new ClassPathResource("text/GameRemovalMail.txt");
+        String stringMessage = GameInfoService.asString(mailMessage)
+                .replace("[game_title]", gameInfo.getTitle());
+        gameInfo.getSubscriptions()
+                .forEach(subscription -> emailService.sendMail(
+                        subscription.getUser().getEmail(),
+                        "Subscription cancelled",
+                        stringMessage
+                ));
+
         infoService.deleteById(id);
     }
 }

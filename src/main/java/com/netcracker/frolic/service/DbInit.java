@@ -77,10 +77,24 @@ public class DbInit {
 
         User client = new User();
         client.setName("BigNickDigger");
-        client.setEmail("ple@gamil.com");
+        client.setEmail("ple@mal.ru");
         client.setPassword(passwordEncoder.encode("Ab123456"));
         client.setRoles(Arrays.asList("ROLE_CLIENT"));
         userService.save(client);
+
+        User client2 = new User();
+        client2.setName("ThotSlayer");
+        client2.setEmail("sample@gamil.com");
+        client2.setPassword(passwordEncoder.encode("Ab123456"));
+        client2.setRoles(Arrays.asList("ROLE_CLIENT"));
+        userService.save(client2);
+
+        User client3 = new User();
+        client3.setName("CheekyFckr");
+        client3.setEmail("sample@dex.ua");
+        client3.setPassword(passwordEncoder.encode("Ab123456"));
+        client3.setRoles(Arrays.asList("ROLE_CLIENT"));
+        userService.save(client3);
     }
 
     private void getGameFromFilesAndPutItInDB(Map.Entry<String, String> titleAndFileName) {

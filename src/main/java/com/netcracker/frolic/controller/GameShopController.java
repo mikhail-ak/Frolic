@@ -85,4 +85,15 @@ class GameShopController {
         return fileService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("/{id}/{rating}")
+    public void rate(@PathVariable long id, @PathVariable int rating) {
+        if (rating > 100 || rating < 1)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The rating is out of boundaries");
+        GameInfo gameInfo = infoService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no game" +
+                        "with id " + id));
+        gameInfo.getRating().add(rating);
+        infoService.save(gameInfo);
+    }
 }

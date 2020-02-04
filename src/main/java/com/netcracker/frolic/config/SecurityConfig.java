@@ -60,7 +60,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/game-shop/**").permitAll()
                 .antMatchers("/user/login").permitAll()
-                .antMatchers("/game-handle/**").hasRole("ADMIN")
+                .antMatchers("/user/register").permitAll()
+                .antMatchers("/game-handle/**").hasRole("EMPLOYEE")
+                .antMatchers("/user/promote").hasRole("ADMIN")
+                .antMatchers("/user/demote").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtFilterConfig(jsonWebTokenUtil));
